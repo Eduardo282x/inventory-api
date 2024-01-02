@@ -3,7 +3,7 @@ import { getConnection }  from '../database/database'
 const getUsers = async (req, res) =>{
     try {
         const connection = await getConnection();
-        const result = await connection.query(`SELECT * FROM users`);
+        const result = await connection.query(`SELECT * FROM users_2`);
         if(result.length > 0){
             try{
                 res.json({success: true, response: result});

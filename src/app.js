@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import authenticationRouter from './routes/authentication.routes';
 import usersRouter from './routes/users.route'
+import inventoryRouter from './routes/inventory.routes'
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use(cors());
 // Routes
 app.use('/api/authentication',authenticationRouter);
 app.use('/api/users',usersRouter);
+app.use('/api/inventory',inventoryRouter);
 
 export default app;

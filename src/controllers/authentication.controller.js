@@ -5,7 +5,7 @@ const authenticateUser = async (req, res) =>{
         const { Username, Password } = req.body;
         const User = { Username, Password}
         const connection = await getConnection();
-        const result = await connection.query(`SELECT * FROM users WHERE Username='${Username}' and Password='${Password}'`);
+        const result = await connection.query(`SELECT * FROM users_2 WHERE Username='${Username}' and Password='${Password}'`);
         if(result.length > 0){
             try{
                 res.json({message:'Bienvenido', success: true, userData: result[0]});
@@ -18,6 +18,7 @@ const authenticateUser = async (req, res) =>{
         }
     }
     catch (err) {
+        console.log(err);
         res.status(500)
         res.send(err.message)
     }
