@@ -3,6 +3,7 @@ import { methods as authenticationControllers } from "../controllers/authenticat
 
 const router=Router();
 
-router.post('/', authenticationControllers.authenticateUser)
+router.post('/', authenticationControllers.authenticateUser);
+router.post('/change', authenticationControllers.changeDataUser);
 
 export default router;
