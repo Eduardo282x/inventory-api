@@ -3,6 +3,8 @@ import { methods as inventoryController } from "../controllers/inventory.control
 
 const router=Router();
 
-router.get('/', inventoryController.getInventory)
+router.get('/', inventoryController.getInventory);
+router.post('/add', inventoryController.addArticleInventory);
+router.post('/edit', inventoryController.editArticleInventory);
 
 export default router;
