@@ -40,6 +40,19 @@ const addUsers = async (req, res) =>{
     }
 }
 
+const editUsers = async (req, res) =>{
+    try {
+        const { Id, Name, Lastname, Email, Phone, Identify, } = req.body;
+        const connection = await getConnection();
+        const result = await connection.query(`UPDATE ${tableName} SET Name='${Name}',Lastname='${Lastname}',Email='${Email}',Phone='${Phone}',Identify='${Identify}' where Id= '${Id}'`);
+        res.json({success: true});
+    }
+    catch (err) {
+        res.status(500)
+        res.send(err.message)
+    }
+}
+
 const queryDelete = `DELETE FROM ${tableName}`
 const deleteUsers = async (req, res) =>{
     try {
@@ -57,5 +70,6 @@ const deleteUsers = async (req, res) =>{
 export const methods = {
     getUsers,
     addUsers,
+    editUsers,
     deleteUsers
 };
