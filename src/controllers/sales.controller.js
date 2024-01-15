@@ -1,11 +1,12 @@
 import { getConnection }  from '../database/database'
 
-const tableName = 'sales'
-const tableNameDetail = 'sales'
-const tableNameCart = 'cartinventory'
+const tableName = 'sales';
+const tableNameDetail = 'salesdetails';
+const tableNameCart = 'cartinventory';
+const tableNameInventory = 'invetory';
 
-const querySale = `SELECT * from ${tableName}`;
 const getSale = async (req, res) =>{
+    const querySale = `SELECT * from ${tableName}`;
     try {
         const connection = await getConnection();
         const result = await connection.query(`${querySale}`);
@@ -17,17 +18,17 @@ const getSale = async (req, res) =>{
     }
 }
 
-
-const queryAdd = `INSERT INTO ${tableName} (IdSheller, Total, DateSale) VALUES `
 const addSale = async (req, res) =>{
+    const queryAdd = `INSERT INTO ${tableName} (IdSheller, Total, DateSale) VALUES `
     try {
         const {total, idSheller, details } = req.body;
         const date = new Date().toISOString().split('T')[0];
         const connection = await getConnection();
         const result = await connection.query(`${queryAdd} ('${idSheller}', '${total}', '${date}')`);
-        res.json({message: 'Pedido realizado.', success: true});
         await addDetails(details);
-        // await deletDetailsCart(idSheller);
+        await updateInventory(details);
+        await deletDetailsCart(idSheller);
+        res.json({message: 'Pedido realizado.', success: true});
     }
     catch (err) {
         res.status(500);
@@ -35,21 +36,20 @@ const addSale = async (req, res) =>{
     }
 }
 
-const queryAddDetail = `INSERT INTO ${tableNameDetail} (IdSales, IdInventory, CodInventory, Amount, Price, Total) VALUES `
-const queryGetLastSale = `SELECT idsales FROM ${tableName} order by IdSales desc limit 1`;
 const addDetails = async (details) =>{
+    const queryAddDetail = `INSERT INTO ${tableNameDetail} (IdSales, IdInventory, CodInventory, Amount, Price, Total) VALUES `
+    const queryGetLastSale = `SELECT idsales FROM ${tableName} order by IdSales desc limit 1`;
     try {
         const connection = await getConnection();
-        console.log(details);
         const getIdSale = await connection.query(queryGetLastSale);
         let insertDetail = '';
 
         details.map(det => {
-            insertDetail += `('${getIdSale}', '${det.IdCode}', '${det.Code}', '${det.Amount}', '${det.Price}', '${det.Total}',),`
+            insertDetail += `('${getIdSale[0].idsales}', '${det.IdCode}', '${det.Code}', '${det.Amount}', '${det.Price}', '${det.Total}'),`
         })
-        // const result = await connection.query(`${queryAddDetail} ${insertDetail}`);
+        insertDetail = insertDetail.substring(0, insertDetail.length - 1);
+        const result = await connection.query(queryAddDetail + insertDetail);
         const detailr = {
-            detail: insertDetail,
             query: queryAddDetail + insertDetail
         }
         console.log(detailr);
@@ -57,11 +57,30 @@ const addDetails = async (details) =>{
     catch (err) {
         res.status(500);
         res.send(err.message);
+        console.log(err.message);
     }
 }
 
-const queryDeleteDetail = `DELETE FROM ${tableNameCart} WHERE`
+const updateInventory = async (details) =>{
+    const queryGetInventory = `SELECT * FROM  ${tableNameInventory} WHERE IdCode = `
+    const queryUpdateInventory = `UPDATE ${tableNameInventory} SET`
+    try {
+        const connection = await getConnection();
+        details.map(async det => {
+            const getArticle = await connection.query(`${queryGetInventory} '${det.IdCode}'`);
+            const subtraction = getArticle[0].Amount - det.Amount;
+            const updateArticle = await connection.query(`${queryUpdateInventory} Amount = '${subtraction}' WHERE IdCode = '${det.IdCode}'`);
+        })
+    }
+    catch (err) {
+        res.status(500);
+        res.send(err.message);
+        console.log(err.message);
+    }
+}
+
 const deletDetailsCart = async (idSheller) =>{
+    const queryDeleteDetail = `DELETE FROM ${tableNameCart} WHERE`
     try {
         const connection = await getConnection();
         const result = await connection.query(`${queryDeleteDetail} IdSheller = '${idSheller}'`);
