@@ -4,18 +4,10 @@ const tableName = 'cartinventory'
 const queryUser = `SELECT cartinventory.IdCart, invetory.Description, cartinventory.Amount, invetory.Price, cartinventory.Amount * invetory.Price as Total FROM ${tableName} join invetory on cartinventory.IdCode = invetory.IdCode`;
 const getCarts = async (req, res) =>{
     try {
+        const {IdSheller} = req.query;
         const connection = await getConnection();
-        const result = await connection.query(`${queryUser}`);
-        if(result.length > 0){
-            try{
-                res.json({response: result});
-            }
-            catch(ex){
-                console.log(ex);
-            }
-        } else {
-            res.json({success: false});
-        }
+        const result = await connection.query(`${queryUser} where IdSheller = '${IdSheller}'`);
+        res.json({response: result});
     }
     catch (err) {
         res.status(500)
@@ -24,26 +16,26 @@ const getCarts = async (req, res) =>{
 }
 
 
-const queryAdd = `INSERT INTO ${tableName} (IdCode, Amount) VALUES `
+const queryAdd = `INSERT INTO ${tableName} (IdCode, IdSheller, Amount) VALUES `
 const addCarts = async (req, res) =>{
     try {
-        const {Code, Description, Axis, Aloj, Height, Amount, Price, IdCode,} = req.body;
+        const {Code, Description, Axis, Aloj, Height, Amount, Price, IdCode, IdSheller} = req.body;
         const connection = await getConnection();
-        const result = await connection.query(`${queryAdd} ('${IdCode}', '${Amount}')`);
-        res.json({message: 'Articulo agregado exitosamente.', success: true});
+        const result = await connection.query(`${queryAdd} ('${IdCode}', '${IdSheller}', '${Amount}')`);
+        res.json({message: 'Articulo agregado al carrito.', success: true});
     }
     catch (err) {
-        res.status(500)
-        res.send(err.message)
+        res.status(500);
+        res.send(err.message);
     }
 }
 
 const editCart = async (req, res) =>{
     try {
-        const { IdCart, Amount } = req.body;
+        const { IdCart, Amount, Description } = req.body;
         const connection = await getConnection();
         const result = await connection.query(`UPDATE ${tableName} SET Amount='${Amount}' where IdCart= '${IdCart}'`);
-        res.json({success: true});
+        res.json({success: true, message: 'Pedido modificado.'});
     }
     catch (err) {
         res.status(500)

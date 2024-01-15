@@ -21,7 +21,7 @@ const addArticleInventory = async (req, res) =>{
         const { Code, Description, Axis, Aloj, Height, Amount, Price, }= req.body;
         const connection = await getConnection();
         const result = await connection.query(`${queryAdd} VALUES ('${Code}','${Description}','${Axis}','${Aloj}','${Height}','${Amount}','${Price}')`);
-        res.json({success: true});
+        res.json({success: true, message: 'Articulo agregado.'});
     }
     catch (err) {
         console.log(err);
