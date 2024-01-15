@@ -1,12 +1,12 @@
 import { getConnection }  from '../database/database'
 
 const tableName = 'cartinventory'
-const queryUser = `SELECT cartinventory.IdCart, invetory.Description, cartinventory.Amount, invetory.Price, cartinventory.Amount * invetory.Price as Total FROM ${tableName} join invetory on cartinventory.IdCode = invetory.IdCode`;
+const queryCart = `SELECT cartinventory.IdCart, invetory.Description, cartinventory.Amount, invetory.Amount as AmountMax, invetory.IdCode, invetory.Code, invetory.Price, cartinventory.Amount * invetory.Price as Total FROM ${tableName} join invetory on cartinventory.IdCode = invetory.IdCode`;
 const getCarts = async (req, res) =>{
     try {
         const {IdSheller} = req.query;
         const connection = await getConnection();
-        const result = await connection.query(`${queryUser} where IdSheller = '${IdSheller}'`);
+        const result = await connection.query(`${queryCart} where IdSheller = '${IdSheller}'`);
         res.json({response: result});
     }
     catch (err) {

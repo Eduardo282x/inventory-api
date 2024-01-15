@@ -12,6 +12,10 @@ const getConnection = () => {
     return connection;
 };
 
+const endConnection = () => {
+    return connection.end();
+};
+
 module.exports = {
     getConnection
 };

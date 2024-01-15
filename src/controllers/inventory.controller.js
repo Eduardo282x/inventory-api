@@ -35,7 +35,7 @@ const editArticleInventory = async (req, res) =>{
         const connection = await getConnection();
         const {Code, Description, Axis, Aloj, Height, Amount, Price, IdCode,} = req.body;
         const result = await connection.query(`UPDATE ${tableName} SET Code='${Code}',Description='${Description}',Axis='${Axis}',Aloj='${Aloj}',Height='${Height}',Amount='${Amount}',Price='${Price}' WHERE IdCode='${IdCode}'`);
-        res.json({success: true});
+        res.json({success: true, message: 'Articulo editado.'});
     }
     catch (err) {
         console.log(err);

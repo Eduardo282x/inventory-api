@@ -32,7 +32,7 @@ const addUsers = async (req, res) =>{
         const username = Name + Identify.toString().substr(0,2);
         const connection = await getConnection();
         const result = await connection.query(`${queryAdd} ('${Name}', '${Lastname}', '${username}', '${Email}', '${Phone}', '${Identify}' , 2)`);
-        res.json({success: true});
+        res.json({success: true, message: 'Usuario agregado.'});
     }
     catch (err) {
         res.status(500)
@@ -45,7 +45,7 @@ const editUsers = async (req, res) =>{
         const { Id, Name, Lastname, Email, Phone, Identify, } = req.body;
         const connection = await getConnection();
         const result = await connection.query(`UPDATE ${tableName} SET Name='${Name}',Lastname='${Lastname}',Email='${Email}',Phone='${Phone}',Identify='${Identify}' where Id= '${Id}'`);
-        res.json({success: true});
+        res.json({success: true, message: 'Usuario editado.'});
     }
     catch (err) {
         res.status(500)
