@@ -6,10 +6,25 @@ const tableNameCart = 'cartinventory';
 const tableNameInventory = 'invetory';
 
 const getSale = async (req, res) =>{
-    const querySale = `SELECT * from ${tableName}`;
+    const querySale = `SELECT sales.IdSales, users_2.Name, sales.Total, sales.DateSale FROM ${tableName} join users_2 on sales.IdSheller = users_2.Id `;
     try {
         const connection = await getConnection();
-        const result = await connection.query(`${querySale}`);
+        const {start, end } = req.body;
+        const result = await connection.query(`${querySale} WHERE DateSale BETWEEN '${start}' and '${end}'`);
+        res.json({response: result});
+    }
+    catch (err) {
+        res.status(500)
+        res.send(err.message)
+    }
+}
+
+const getDetails = async (req, res) =>{
+    const queryDetails = `SELECT invetory.Description, salesdetails.CodInventory, salesdetails.Amount, salesdetails.Price, salesdetails.Total FROM ${tableNameDetail} join ${tableNameInventory} on salesdetails.IdInventory = invetory.IdCode`;
+    try {
+        const connection = await getConnection();
+        const {IdSales} = req.query;
+        const result = await connection.query(`${queryDetails} WHERE salesdetails.IdSales ='${IdSales }'`);
         res.json({response: result});
     }
     catch (err) {
@@ -22,9 +37,12 @@ const addSale = async (req, res) =>{
     const queryAdd = `INSERT INTO ${tableName} (IdSheller, Total, DateSale) VALUES `
     try {
         const {total, idSheller, details } = req.body;
-        const date = new Date().toISOString().split('T')[0];
+        const date = new Date();
+        const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        const formattedDate = localDate.toISOString().split('T')[0];
+
         const connection = await getConnection();
-        const result = await connection.query(`${queryAdd} ('${idSheller}', '${total}', '${date}')`);
+        const result = await connection.query(`${queryAdd} ('${idSheller}', '${total}', '${formattedDate}')`);
         await addDetails(details);
         await updateInventory(details);
         await deletDetailsCart(idSheller);
@@ -94,5 +112,6 @@ const deletDetailsCart = async (idSheller) =>{
 
 export const methods = {
     getSale,
+    getDetails,
     addSale,
 };

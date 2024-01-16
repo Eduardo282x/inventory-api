@@ -17,10 +17,16 @@ const getCarts = async (req, res) =>{
 
 
 const queryAdd = `INSERT INTO ${tableName} (IdCode, IdSheller, Amount) VALUES `
+const queryExist = `SELECT * FROM  ${tableName} WHERE IdCode`
 const addCarts = async (req, res) =>{
     try {
         const {Code, Description, Axis, Aloj, Height, Amount, Price, IdCode, IdSheller} = req.body;
         const connection = await getConnection();
+        const exist = await connection.query(`${queryExist} = '${IdCode}'`);
+        if(exist && exist.length> 0){
+            res.json({message: 'El articulo ya esta en el carrito.', success: true});
+            return
+        }
         const result = await connection.query(`${queryAdd} ('${IdCode}', '${IdSheller}', '${Amount}')`);
         res.json({message: 'Articulo agregado al carrito.', success: true});
     }
