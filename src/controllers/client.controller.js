@@ -2,11 +2,11 @@ import { getConnection }  from '../database/database'
 
 const tableName = 'users_2'
 
-const queryUser = `SELECT * FROM ${tableName}`;
-const getUsers = async (req, res) =>{
+const getClients = async (req, res) =>{
+    const queryClient = `SELECT * FROM ${tableName}`;
     try {
         const connection = await getConnection();
-        const result = await connection.query(`${queryUser} where Rol = 2`);
+        const result = await connection.query(`${queryClient} where Rol = 3`);
         if(result.length > 0){
             try{
                 res.json({success: true, response: result});
@@ -25,14 +25,14 @@ const getUsers = async (req, res) =>{
 }
 
 
-const queryAdd = `INSERT INTO ${tableName} (Name, Lastname, Username, Email, Phone, Identify, Rol) VALUES `
-const addUsers = async (req, res) =>{
+const addClient = async (req, res) =>{
+    const queryAdd = `INSERT INTO ${tableName} (Name, Lastname, Email, Phone, Identify, Address, Rol) VALUES `
     try {
-        const { Name, Lastname, Email, Phone, Identify, } = req.body;
+        const { Name, Lastname, Email, Phone, Identify, Address } = req.body;
         const username = Name + Identify.toString().substr(0,2);
         const connection = await getConnection();
-        const result = await connection.query(`${queryAdd} ('${Name}', '${Lastname}', '${username}', '${Email}', '${Phone}', '${Identify}' , 2)`);
-        res.json({success: true, message: 'Usuario agregado.'});
+        const result = await connection.query(`${queryAdd} ('${Name}', '${Lastname}','${Email}', '${Phone}', '${Identify}', '${Address}' , 3)`);
+        res.json({success: true, message: 'Cliente agregado.'});
     }
     catch (err) {
         res.status(500)
@@ -40,12 +40,12 @@ const addUsers = async (req, res) =>{
     }
 }
 
-const editUsers = async (req, res) =>{
+const editClient = async (req, res) =>{
     try {
-        const { Id, Name, Lastname, Email, Phone, Identify, } = req.body;
+        const { Id, Name, Lastname, Email, Phone, Identify, Address} = req.body;
         const connection = await getConnection();
-        const result = await connection.query(`UPDATE ${tableName} SET Name='${Name}',Lastname='${Lastname}',Email='${Email}',Phone='${Phone}',Identify='${Identify}' where Id= '${Id}'`);
-        res.json({success: true, message: 'Usuario editado.'});
+        const result = await connection.query(`UPDATE ${tableName} SET Name='${Name}',Lastname='${Lastname}',Email='${Email}',Phone='${Phone}',Identify='${Identify}',Address='${Address}' where Id= '${Id}'`);
+        res.json({success: true, message: 'Cliente editado.'});
     }
     catch (err) {
         res.status(500)
@@ -53,8 +53,8 @@ const editUsers = async (req, res) =>{
     }
 }
 
-const queryDelete = `DELETE FROM ${tableName}`
-const deleteUsers = async (req, res) =>{
+const deleteClient = async (req, res) =>{
+    const queryDelete = `DELETE FROM ${tableName}`
     try {
         const { Id } = req.body;
         const connection = await getConnection();
@@ -68,8 +68,8 @@ const deleteUsers = async (req, res) =>{
 }
 
 export const methods = {
-    getUsers,
-    addUsers,
-    editUsers,
-    deleteUsers
+    getClients,
+    addClient,
+    editClient,
+    deleteClient
 };
