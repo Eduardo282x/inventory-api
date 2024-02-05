@@ -29,7 +29,6 @@ const addClient = async (req, res) =>{
     const queryAdd = `INSERT INTO ${tableName} (Name, Lastname, Email, Phone, Identify, Address, Rol) VALUES `
     try {
         const { Name, Lastname, Email, Phone, Identify, Address } = req.body;
-        const username = Name + Identify.toString().substr(0,2);
         const connection = await getConnection();
         const result = await connection.query(`${queryAdd} ('${Name}', '${Lastname}','${Email}', '${Phone}', '${Identify}', '${Address}' , 3)`);
         res.json({success: true, message: 'Cliente agregado.'});
@@ -59,7 +58,7 @@ const deleteClient = async (req, res) =>{
         const { Id } = req.body;
         const connection = await getConnection();
         const result = await connection.query(`${queryDelete} WHERE Id = ${Id}`);
-        res.json({success: true});
+        res.json({success: true, message: 'Cliente eliminado.'});
     }
     catch (err) {
         res.status(500)
