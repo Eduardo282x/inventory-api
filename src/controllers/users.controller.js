@@ -6,7 +6,7 @@ const queryUser = `SELECT * FROM ${tableName}`;
 const getUsers = async (req, res) =>{
     try {
         const connection = await getConnection();
-        const result = await connection.query(`${queryUser} where Rol != 1`);
+        const result = await connection.query(`${queryUser} where Rol = 2`);
         if(result.length > 0){
             try{
                 res.json({success: true, response: result});
