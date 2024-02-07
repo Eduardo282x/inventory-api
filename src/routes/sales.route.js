@@ -6,5 +6,6 @@ const router=Router();
 router.post('/', salesControllers.getSale);
 router.get('/details', salesControllers.getDetails);
 router.post('/add', salesControllers.addSale);
+router.post('/facture', salesControllers.getPDFData);
 
 export default router;
