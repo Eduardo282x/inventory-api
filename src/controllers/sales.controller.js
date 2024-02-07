@@ -100,7 +100,7 @@ const updateInventory = async (details) =>{
 
 const getPDFData = async (req,res) =>{
     const queryGetClient = `SELECT users_2.Name, users_2.Lastname, users_2.Identify, users_2.Phone, users_2.Address FROM ${tableNameUsers}`
-    const queryGetUserAndDetails = `SELECT sales.IdSales, users_2.Id, users_2.Name, users_2.Lastname, salesdetails.Amount, invetory.Description, invetory.Price, salesdetails.Total, sales.Total, sales.DateSale FROM ${tableName} join ${tableNameUsers} on sales.IdSheller = users_2.Id join ${tableNameDetail} on sales.IdSales = salesdetails.IdSales join ${tableNameInventory} on salesdetails.IdInventory = invetory.IdCode`;
+    const queryGetUserAndDetails = `SELECT sales.IdSales, users_2.Id, users_2.Name, users_2.Lastname, salesdetails.Amount, invetory.Description, salesdetails.Price, salesdetails.Total as TotalArticle, sales.Total as TotalFacture, sales.DateSale FROM ${tableName} join ${tableNameUsers} on sales.IdSheller = users_2.Id join ${tableNameDetail} on sales.IdSales = salesdetails.IdSales join ${tableNameInventory} on salesdetails.IdInventory = invetory.IdCode`;
     try {
         const {IdSales, IdUser, IdClient } = req.body;
         const connection = await getConnection();
